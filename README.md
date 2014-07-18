@@ -15,12 +15,17 @@ Usage
 
 ```python
 import os
-import pytz
+
 if 'SERVER_SOFTWARE' in os.environ.keys(): # on GAE
   from google.appengine.api import memcache
   from google.appengine.ext import webapp
+  # use zoneinfo.zip on current directory
+  # pytz-2014.4-py2.5.egg does not work on GAE (pytz.common_timezones is [])
+  sys.path.append('pytz-2014.4-gae-py2.5.egg')
 else:
   import memcache
+
+import pytz
 
 class GAEHandler(webapp.RequestHandler):
   def get(self, param):
