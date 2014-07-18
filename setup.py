@@ -14,7 +14,7 @@ except (Exception, ), e:
   nopd = True
 
 PKG_TITLE = 'pytz-memcache'
-PKG_VER = '2014.4'
+PKG_VER = '2014.4.1'
 PKG_URL = 'https://github.com/HatsuneMiku/pytz-memcache'
 AUTHOR = '999hatsune (original pytz by Stuart Bishop)'
 AUTHOR_EMAIL = '999hatsune@gmail.com' # 'stuart@stuartbishop.net'
@@ -42,12 +42,17 @@ data_apdx = [
   '.gitignore',
   'README.md',
   'requirements.txt',
-  'test_performance.py'
+  'test_performance.py',
+  # 'pytz-2014.4-gae-py2.5.egg',
+  'zoneinfo.zip'
 ]
 
+R_APDX = []
+'''
 R_APDX = [('zoneinfo', [
   'Japan',
-  'GMT'
+  'GMT',
+  'UTC'
 ])]
 R_APDX += [('%s/%s' % (R_APDX[0][0], 'Asia'), [
   'Tokyo',
@@ -57,6 +62,7 @@ R_APDX += [('%s/%s' % (R_APDX[0][0], 'Pacific'), [
   'Auckland',
   'Palau'
 ])]
+'''
 data_r_apdx = [map(lambda a: '%s/%s' % (t[0], a), t[1]) for t in R_APDX]
 
 if os.name != 'nt':
@@ -72,7 +78,7 @@ else: # to avlid SandboxViolation on mkdir
 
 package_data = {
   PKG_TITLE: [
-    'zoneinfo/UTC'
+    'zoneinfo.zip'
   ] + pkg_apdx
 }
 
@@ -87,7 +93,7 @@ kwargs = {
   'url'             : PKG_URL,
   'download_url'    : PYPI_DLURL,
   'packages'        : [PKG_TITLE],
-  'package_dir'     : {PKG_TITLE: './%s' % PKG_TITLE},
+  'package_dir'     : {PKG_TITLE: './src/pytz'}, # './%s' % PKG_TITLE},
   'package_data'    : package_data,
   'requires'        : pkg_requirements,
   'license'         : 'MIT License',

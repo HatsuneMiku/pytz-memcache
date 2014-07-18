@@ -48,7 +48,7 @@ Remarks
 Do It Yourself
 --------------
 
- - unzip pytz-2014.4-py2.5.egg
+ - unzip pytz-2014.4-py2.X.egg
  - delete *.pyc
  - zip recursive pytz/zoneinfo/ to zoneinfo.zip
  - copy zoneinfo.zip to your application directory (current directory on GAE)
