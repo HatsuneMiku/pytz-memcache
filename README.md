@@ -75,7 +75,9 @@ Requirements
 Relations
 ---------
 
+ - pytz https://pypi.python.org/pypi/pytz
  - python-memcached (client OS independent) https://pypi.python.org/pypi/python-memcached/1.53
+ - GAE https://appengine.google.com/
  - memcached (server for UNIX) http://memcached.org/
  - MemCacheD Manager (server for windows) http://allegiance.chi-town.com/MemCacheDManager.aspx
 
