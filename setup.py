@@ -43,7 +43,7 @@ data_apdx = [
   'README.md',
   'requirements.txt',
   'test_performance.py',
-  # 'pytz-2014.4-gae-py2.5.egg',
+  'pytz-2014.4-gae-py2.5.egg',
   'zoneinfo.zip'
 ]
 
