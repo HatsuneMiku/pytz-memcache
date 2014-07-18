@@ -89,27 +89,37 @@ def open_resource(name):
     filename = os.path.join(os.path.dirname(__file__),
                             'zoneinfo', *name_parts)
     if not os.path.exists(filename):
-      if resource_stream is not None:
+      if False: #resource_stream is not None:
         # http://bugs.launchpad.net/bugs/383171 - we avoid using this
         # unless absolutely necessary to help when a broken version of
         # pkg_resources is installed.
         return resource_stream(__name__, 'zoneinfo/' + name)
       else:
+        # 'zoneinfo.zip' must be in your application directory
+        # memcached must be running on '127.0.0.1:11211' (local)
+        #   (memcached has been running on GAE)
+        # it takes about few seconds to run at the first time, but faster next
+        # please delete key 'pytz_loaded' from cache when update pytz zoneinfo
         import logging
-        from google.appengine.api import memcache
         import base64
         import zipfile
         from cStringIO import StringIO
-        tzfn = os.path.join('zoneinfo', *name_parts)
-        tzkey = os.path.join('pytz', tzfn)
+        if 'SERVER_SOFTWARE' in os.environ.keys(): # on GAE
+          from google.appengine.api import memcache
+          mem = memcache.Client()
+        else:
+          import memcache
+          mem = memcache.Client(['127.0.0.1:11211'], debug=0)
+        tzfn = '/'.join(('zoneinfo', '/'.join(name_parts)))
+        tzkey = '/'.join(('pytz', tzfn))
         try:
-          tz_loaded = memcache.get(key=tzkey)
+          tz_loaded = mem.get(tzkey)
         except (Exception, ), e:
           tz_loaded = None
         if tz_loaded is None:
           pytzkey = 'pytz_loaded'
           try:
-            pytz_loaded = memcache.get(key=pytzkey)
+            pytz_loaded = mem.get(pytzkey)
           except (Exception, ), e:
             pytz_loaded = None
             logging.info('not exist %s' % pytzkey)
@@ -119,14 +129,14 @@ def open_resource(name):
             f = open(zifile, 'rb')
             b = f.read()
             f.close()
-            memcache.set(key=pytzkey, value=base64.b64encode(b)) # time=None
+            mem.set(pytzkey, base64.b64encode(b)) # time=0
             logging.info('set %s' % pytzkey)
           else:
             b = base64.b64decode(pytz_loaded)
           zoneinfo = zipfile.ZipFile(StringIO(b))
           d = zoneinfo.read(tzfn)
           zoneinfo.close()
-          memcache.set(key=tzkey, value=base64.b64encode(d)) # time=None
+          mem.set(tzkey, base64.b64encode(d)) # time=0
         else:
           d = base64.b64decode(tz_loaded)
         return StringIO(d)
