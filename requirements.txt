@@ -1,2 +1,1 @@
-python-memcached>=1.45
 pytz>=2014.4

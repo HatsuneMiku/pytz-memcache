@@ -1,6 +1,8 @@
 pytz-memcache
 =============
 
+latest version at https://github.com/HatsuneMiku/pytz-memcache
+
 pytz with memcache modified to be high performance that also works on GAE
 
 ( copied from pytz-2014.4 )
@@ -37,7 +39,7 @@ Remarks
 -------
 
  - 'zoneinfo.zip' must be in your application directory
- - memcached must be running on '127.0.0.1:11211' (local)
+ - memcached must be running on '127.0.0.1:11211' (for local test only)
  -   (memcached has been running on GAE)
  - it takes about few seconds to run at the first time, but faster next
  - please delete key 'pytz_loaded' from cache when update pytz zoneinfo
@@ -61,6 +63,13 @@ Links
  - https://github.com/HatsuneMiku/pytz-memcache
  - https://github.com/HatsuneMiku/pytz-memcache/wiki
  - https://pypi.python.org/pypi/pytz-memcache
+
+
+Requirements
+------------
+
+ - pytz (included)
+ - python-memcached (for local test only)
 
 
 Relations
