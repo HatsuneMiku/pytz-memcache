@@ -1,0 +1,6 @@
+include MANIFEST.in
+include README.md
+include requirements.txt
+include test_performance.py
+include pytz-2014.4-gae-py2.5.egg
+include zoneinfo.zip
