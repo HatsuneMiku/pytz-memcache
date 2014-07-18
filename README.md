@@ -1,8 +1,7 @@
 pytz-memcache
 =============
 
-pytz with memcache modified to be hi performance
-can also use it on GAE
+pytz with memcache modified to be hi performance that also works on GAE
 
 Links
 -----
