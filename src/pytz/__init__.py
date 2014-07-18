@@ -88,11 +88,48 @@ def open_resource(name):
             raise ValueError('Bad path segment: %r' % part)
     filename = os.path.join(os.path.dirname(__file__),
                             'zoneinfo', *name_parts)
-    if not os.path.exists(filename) and resource_stream is not None:
+    if not os.path.exists(filename):
+      if resource_stream is not None:
         # http://bugs.launchpad.net/bugs/383171 - we avoid using this
         # unless absolutely necessary to help when a broken version of
         # pkg_resources is installed.
         return resource_stream(__name__, 'zoneinfo/' + name)
+      else:
+        import logging
+        from google.appengine.api import memcache
+        import base64
+        import zipfile
+        from cStringIO import StringIO
+        tzfn = os.path.join('zoneinfo', *name_parts)
+        tzkey = os.path.join('pytz', tzfn)
+        try:
+          tz_loaded = memcache.get(key=tzkey)
+        except (Exception, ), e:
+          tz_loaded = None
+        if tz_loaded is None:
+          pytzkey = 'pytz_loaded'
+          try:
+            pytz_loaded = memcache.get(key=pytzkey)
+          except (Exception, ), e:
+            pytz_loaded = None
+            logging.info('not exist %s' % pytzkey)
+          if pytz_loaded is None:
+            zifile = 'zoneinfo.zip'
+            # zifile = os.path.join(os.path.dirname(__file__), zifile)
+            f = open(zifile, 'rb')
+            b = f.read()
+            f.close()
+            memcache.set(key=pytzkey, value=base64.b64encode(b)) # time=None
+            logging.info('set %s' % pytzkey)
+          else:
+            b = base64.b64decode(pytz_loaded)
+          zoneinfo = zipfile.ZipFile(StringIO(b))
+          d = zoneinfo.read(tzfn)
+          zoneinfo.close()
+          memcache.set(key=tzkey, value=base64.b64encode(d)) # time=None
+        else:
+          d = base64.b64decode(tz_loaded)
+        return StringIO(d)
     return open(filename, 'rb')
 
 
@@ -110,7 +147,7 @@ def resource_exists(name):
 # module, as well as the Zope3 i18n package. Perhaps we should just provide
 # the POT file and translations, and leave it up to callers to make use
 # of them.
-# 
+#
 # t = gettext.translation(
 #         'pytz', os.path.join(os.path.dirname(__file__), 'locales'),
 #         fallback=True
@@ -123,7 +160,7 @@ def resource_exists(name):
 _tzinfo_cache = {}
 
 def timezone(zone):
-    r''' Return a datetime.tzinfo implementation for the given timezone 
+    r''' Return a datetime.tzinfo implementation for the given timezone
 
     >>> from datetime import datetime, timedelta
     >>> utc = timezone('UTC')
@@ -247,7 +284,7 @@ UTC = utc = UTC() # UTC is a singleton
 def _UTC():
     """Factory function for utc unpickling.
 
-    Makes sure that unpickling a utc instance always returns the same 
+    Makes sure that unpickling a utc instance always returns the same
     module global.
 
     These examples belong in the UTC class above, but it is obscured; or in
@@ -1069,7 +1106,7 @@ all_timezones = \
  'Zulu']
 all_timezones = LazyList(
         tz for tz in all_timezones if resource_exists(tz))
-        
+
 all_timezones_set = LazySet(all_timezones)
 common_timezones = \
 ['Africa/Abidjan',
@@ -1506,5 +1543,5 @@ common_timezones = \
  'UTC']
 common_timezones = LazyList(
             tz for tz in common_timezones if tz in all_timezones)
-        
+
 common_timezones_set = LazySet(common_timezones)
