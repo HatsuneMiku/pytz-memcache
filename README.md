@@ -13,7 +13,7 @@ Usage
  - copy pytz-2014.4-gae-py2.X.egg to your application directory
 
 
-'''python
+```python
 import os
 import pytz
 if 'SERVER_SOFTWARE' in os.environ.keys(): # on GAE
@@ -25,7 +25,7 @@ else:
 class GAEHandler(webapp.RequestHandler):
   def get(self, param):
     self.response.out.write(pytz.common_timezones)
-'''
+```
 
 
 Remarks
