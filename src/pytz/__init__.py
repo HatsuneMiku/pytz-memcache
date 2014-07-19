@@ -96,7 +96,7 @@ def open_resource(name):
         return resource_stream(__name__, 'zoneinfo/' + name)
       else:
         # 'zoneinfo.zip' must be in your application directory
-        # memcached must be running on '127.0.0.1:11211' (local)
+        # memcached must be running on '127.0.0.1:11211' (for local test only)
         #   (memcached has been running on GAE)
         # it takes about few seconds to run at the first time, but faster next
         # please delete key 'pytz_loaded' from cache when update pytz zoneinfo
@@ -129,14 +129,20 @@ def open_resource(name):
             f = open(zifile, 'rb')
             b = f.read()
             f.close()
-            mem.set(pytzkey, base64.b64encode(b)) # time=0
+            zoneinfo = zipfile.ZipFile(StringIO(b))
+            for tzfn in zoneinfo.namelist():
+              if tzfn.endswith('/'): continue
+              d = zoneinfo.read(tzfn)
+              mem.set('/'.join(('pytz', tzfn)), base64.b64encode(d)) # time=0
+            zoneinfo.close()
+            mem.set(pytzkey, 'done') # time=0
             logging.info('set %s' % pytzkey)
           else:
-            b = base64.b64decode(pytz_loaded)
-          zoneinfo = zipfile.ZipFile(StringIO(b))
-          d = zoneinfo.read(tzfn)
-          zoneinfo.close()
-          mem.set(tzkey, base64.b64encode(d)) # time=0
+            logging.info('exist %s' % pytzkey)
+          try:
+            d = mem.get(tzkey)
+          except (Exception, ), e:
+            d = ''
         else:
           d = base64.b64decode(tz_loaded)
         return StringIO(d)
