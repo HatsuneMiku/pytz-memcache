@@ -42,6 +42,7 @@ Remarks
  - memcached must be running on '127.0.0.1:11211' (for local test only)
  -   (memcached has been running on GAE)
  - it takes about few seconds to run at the first time, but faster next
+ -   (it takes very long time when memcahced is not running because worst case)
  - please delete key 'pytz_loaded' from cache when update pytz zoneinfo
 
 
@@ -76,7 +77,7 @@ Relations
 ---------
 
  - pytz https://pypi.python.org/pypi/pytz
- - python-memcached (client OS independent) https://pypi.python.org/pypi/python-memcached/1.53
+ - python-memcached (client OS independent) https://pypi.python.org/pypi/python-memcached
  - GAE https://appengine.google.com/
  - memcached (server for UNIX) http://memcached.org/
  - MemCacheD Manager (server for windows) http://allegiance.chi-town.com/MemCacheDManager.aspx
