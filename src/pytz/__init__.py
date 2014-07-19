@@ -130,10 +130,10 @@ def open_resource(name):
             b = f.read()
             f.close()
             zoneinfo = zipfile.ZipFile(StringIO(b))
-            for tzfn in zoneinfo.namelist():
-              if tzfn.endswith('/'): continue
-              d = zoneinfo.read(tzfn)
-              mem.set('/'.join(('pytz', tzfn)), base64.b64encode(d)) # time=0
+            for fn in zoneinfo.namelist():
+              if fn.endswith('/'): continue
+              d = zoneinfo.read(fn)
+              mem.set('/'.join(('pytz', fn)), base64.b64encode(d)) # time=0
             zoneinfo.close()
             mem.set(pytzkey, 'done') # time=0
             logging.info('set %s' % pytzkey)
@@ -142,7 +142,9 @@ def open_resource(name):
           try:
             d = mem.get(tzkey)
           except (Exception, ), e:
-            d = ''
+            d = None
+          if d is None:
+            d = zipfile.ZipFile(zifile).read(tzfn)
         else:
           d = base64.b64decode(tz_loaded)
         return StringIO(d)
