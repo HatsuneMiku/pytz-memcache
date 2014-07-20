@@ -138,13 +138,14 @@ def open_resource(name):
             mem.set(pytzkey, 'done') # time=0
             logging.info('set %s' % pytzkey)
           else:
-            logging.info('exist %s' % pytzkey)
+            pass # logging.info('exist %s' % pytzkey)
           try:
             d = mem.get(tzkey)
           except (Exception, ), e:
             d = None
-          if d is None:
+          if d is None: # worst case
             d = zipfile.ZipFile(zifile).read(tzfn)
+            mem.set(tzkey, base64.b64encode(d)) # time=0
         else:
           d = base64.b64decode(tz_loaded)
         return StringIO(d)
