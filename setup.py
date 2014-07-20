@@ -14,7 +14,7 @@ except (Exception, ), e:
   nopd = True
 
 PKG_TITLE = 'pytz-memcache'
-PKG_VER = '2014.4.33'
+PKG_VER = '2014.4.34'
 PKG_URL = 'https://github.com/HatsuneMiku/pytz-memcache'
 AUTHOR = '999hatsune (original pytz by Stuart Bishop)'
 AUTHOR_EMAIL = '999hatsune@gmail.com' # 'stuart@stuartbishop.net'
