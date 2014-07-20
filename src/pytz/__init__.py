@@ -110,6 +110,8 @@ def open_resource(name):
         else:
           import memcache
           mem = memcache.Client(['127.0.0.1:11211'], debug=0)
+        zifile = 'zoneinfo.zip'
+        # zifile = os.path.join(os.path.dirname(__file__), zifile)
         tzfn = '/'.join(('zoneinfo', '/'.join(name_parts)))
         tzkey = '/'.join(('pytz', tzfn))
         try:
@@ -124,8 +126,6 @@ def open_resource(name):
             pytz_loaded = None
             logging.info('not exist %s' % pytzkey)
           if pytz_loaded is None:
-            zifile = 'zoneinfo.zip'
-            # zifile = os.path.join(os.path.dirname(__file__), zifile)
             f = open(zifile, 'rb')
             b = f.read()
             f.close()
